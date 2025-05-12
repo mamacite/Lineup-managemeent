@@ -1,0 +1,239 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECE Line-up vs WAR</title>
+<style>
+    
+    body {
+
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+
+    }
+
+    header {
+        background: #333;
+        color: #fff;
+        padding: 10px 20px;
+        text-align: center;
+    }
+
+    h2 {
+        border-bottom: 2px solid #333;
+    }
+
+    #field {
+        width: 800px;
+        height: 500px;
+        position: relative;
+        margin: 20px auto;
+        background: #4caf50; /* Grass color */
+        border: 2px solid #333;
+    }
+
+    .player {
+        position: absolute;
+        padding: 5px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .goal {
+        position: absolute;
+        width: 20px;
+        height: 80px;
+        background: white;
+        border: 2px solid #000;
+        top: 34%; /* Position at the bottom of the penalty area */
+    }
+
+    #substitutions {
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+<header>
+<h1>Football Lineup Manager</h1>
+</header>
+
+<main>
+    <section>
+        <h2>Best Players</h2>
+        <ul id="player-list"></ul>
+    </section>
+
+    <section id="field">
+
+        
+        </div>
+        
+        <!-- Draw the football pitch elements with JavaScript -->
+        <canvas id="pitchCanvas" width="800" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById('pitchCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Draw the outer lines
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 5;
+        ctx.strokeRect(50, 30, 700, 440); // Outer rectangle
+
+        // Draw the center circle
+        ctx.beginPath();
+        ctx.arc(400, 250, 60, 0, Math.PI * 2); // Center circle
+        ctx.stroke();
+
+        // Draw the center line
+        ctx.beginPath();
+        ctx.moveTo(400, 30);
+        ctx.lineTo(400, 470); // Center line
+        ctx.stroke();
+
+        // Draw the penalty areas
+        ctx.strokeRect(50, 130, 100, 240); // Left penalty area
+        ctx.strokeRect(650, 130, 100, 240); // Right penalty area
+
+        // Draw the goal areas
+        ctx.strokeRect(50, 190, 30, 120); // Left goal area
+        ctx.strokeRect(720, 190, 30, 120); // Right goal area
+
+        // Draw the goals
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(30, 210, 20, 80); // Left goal
+        ctx.fillRect(750, 210, 20, 80); // Right goal
+
+        // Draw the penalty spot
+        ctx.beginPath();
+        ctx.arc(100, 250, 5, 0, Math.PI * 2); // Left penalty spot
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(700, 250, 5, 0, Math.PI * 2); // Right penalty spot
+        ctx.fill();
+
+        // Draw half circles in front of the penalty areas
+        // Left Half Circle
+        ctx.beginPath();
+        ctx.arc(650, 250, 50, Math.PI / 2, Math.PI * 1.5); // Left half circle
+        ctx.stroke();
+
+        // Right Half Circle
+        ctx.beginPath();
+        ctx.arc(150, 250, 50, Math.PI * 1.5, Math.PI / 2); // Right half circle
+        ctx.stroke();
+    </script>
+    </section>
+
+    <section>s
+        <h2>Substitutions</h2>
+        <ul id="substitutions"></ul>
+    </section>
+
+    <button id="substitute-btn">Make Substitution</button>
+</main>
+
+<footer>
+    <p>&copy; 2024 Football Lineup Manager</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const players = [
+            { name: 'Fasil', number: 1, position: 'Goalkeeper' },
+            { name: 'Tokuma', number: 6, position: 'Defender' },
+            { name: 'Eba', number: 4, position: 'Defender' },
+            { name: 'Ellion', number: 8, position: 'Defender' },
+            { name: 'Simon', number: 21, position: 'Defender' },
+            { name: 'Henok', number: 16, position: 'Midfielder' },
+            { name: 'Pog', number: 7, position: 'Midfielder' },
+            { name: 'Dani', number: 99, position: 'Midfielder' },
+            { name: 'Ada', number: 17, position: 'Forward' },
+            { name: 'Jara', number: 10, position: 'Forward' },
+            { name: 'Abudi', number: 11, position: 'Forward' },
+            { name: 'Yassir', number: 12, position: 'Substitute' },
+            { name: 'Alazar', number: 47, position: 'Substitute' },
+            { name: 'Rata', number: 9, position: 'Substitute' },
+            { name: 'Nahom', number: 23, position: 'Substitute' }
+        ];
+
+        const playerList = document.getElementById('player-list');
+        const field = document.getElementById('field');
+        const substitutions = document.getElementById('substitutions');
+        const substituteBtn = document.getElementById('substitute-btn');
+
+        // Display players in the list
+        const displayPlayers = () => {
+            players.forEach((player, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${player.name} (${player.position})`;
+                li.dataset.index = index; // Store the index for substitution
+                playerList.appendChild(li);
+            });
+        };
+
+        // Initialize the field with the first 11 players and their positions
+        const initializeField = () => {
+            const positions = [
+                { top: '45%', left: '5%' }, // Goalkeeper
+                { top: '10%', left: '25%' },  // Defender 1
+                { top: '30%', left: '25%' },  // Defender 2
+                { top: '55%', left: '25%' },  // Defender 3
+                { top: '80%', left: '25%' },  // Defender 4
+                { top: '15%', left: '45%' },  // Midfielder 1
+                { top: '45%', left: '45%' },  // Midfielder 2
+                { top: '75%', left: '45%' },  // Midfielder 3
+                { top: '15%', left: '70%' },  // Forward 1
+                { top: '45%', left: '70%' },  // Forward 2
+                { top: '75%', left: '70%' }   // Forward 3
+            ];
+
+            for (let i = 0; i < 11; i++) {
+                const playerDiv = document.createElement('div');
+                playerDiv.className = 'player';
+                playerDiv.textContent = players[i].name;
+                playerDiv.style.top = positions[i].top;
+                playerDiv.style.left = positions[i].left;
+                field.appendChild(playerDiv);
+            }
+
+        };
+
+        // Handle substitution
+        substituteBtn.addEventListener('click', () => {
+            const currentPlayers = Array.from(field.children).map(div => div.textContent);
+            const substitutesAvailable = players.filter(player => !currentPlayers.includes(player.name) && player.position === 'Substitute');
+
+            if (substitutesAvailable.length === 0) {
+                alert('No substitutes available!');
+                return;
+            }
+
+            const playerToSub = prompt(`Choose a player to substitute from:\n${currentPlayers.join(', ')}`);
+            const substitutePlayer = prompt(`Choose a substitute from:\n${substitutesAvailable.map(p => p.name).join(', ')}`);
+
+            if (currentPlayers.includes(playerToSub) && substitutesAvailable.map(p => p.name).includes(substitutePlayer)) {
+                // Perform the substitution
+                const index = currentPlayers.indexOf(playerToSub);
+                field.children[index].textContent = substitutePlayer;
+
+                // Add the substituted player to the substitutions list
+                const subLi = document.createElement('li');
+                subLi.textContent = `${playerToSub} substituted by ${substitutePlayer}`;
+                substitutions.appendChild(subLi);
+            } else {
+                alert('Invalid substitution!');
+            }
+        });
+
+        // Display players on page load
+        displayPlayers();
+        initializeField();
+    });
+</script>
+</body>
+</html>
